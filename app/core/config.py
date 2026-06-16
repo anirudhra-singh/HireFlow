@@ -8,6 +8,9 @@ class Settings(BaseSettings):
     APP_NAME: str = "HireFlow"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+# database
+    DATABASE_URL: str
+
 
     class Config:
         env_file = ".env"
