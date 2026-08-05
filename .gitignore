@@ -4,7 +4,7 @@ venv/
 env/
 henv/
 
-# Environment variables - NEVER commit this
+# environment variables 
 .env
 
 # Python cache

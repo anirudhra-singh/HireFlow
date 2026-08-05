@@ -1,5 +1,4 @@
-# every job application a user tracks lives here
-
+#applications table
 import uuid
 from sqlalchemy import Column, String, Text, Date, DateTime, Enum as SQLEnum, ForeignKey
 from sqlalchemy.dialects.postgresql import UUID
@@ -46,7 +45,7 @@ class Application(Base):
     applied_date = Column(Date, nullable=False)
     notes = Column(Text, nullable=True)
 
-    # ai_tip stores the gemini ai advice for this application
+    # ai_tip stores in this column
     ai_tip = Column(Text, nullable=True)
 
     created_at = Column(
@@ -62,7 +61,7 @@ class Application(Base):
         nullable=False
     )
 
-    # relationship back to User
+    
     user = relationship("User", back_populates="applications")
 
     def __repr__(self):
