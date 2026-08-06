@@ -1,6 +1,6 @@
 #applications table
 import uuid
-from sqlalchemy import Column, String, Text, Date, DateTime, Enum as SQLEnum, ForeignKey
+from sqlalchemy import Column, String, Text, Date, DateTime, Enum as SQLEnum, ForeignKey, Boolean
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.orm import relationship
 from sqlalchemy.sql import func
@@ -59,6 +59,12 @@ class Application(Base):
         server_default=func.now(),
         onupdate=func.now(),
         nullable=False
+    )
+    
+    is_deleted = Column(
+    Boolean,
+    default=False,
+    nullable=False
     )
 
     
