@@ -5,7 +5,7 @@ from fastapi import HTTPException, status
 from app.models.application import Application
 from app.models.user import User, UserRole
 from app.schemas.application import ApplicationCreate, ApplicationUpdate
-
+from app.services import ai_service
 
 def create_application(
     db: Session,
@@ -91,3 +91,21 @@ def delete_application(
     # soft delete 
     application.is_deleted = True
     db.commit()
+
+#=== ai service
+def generate_ai_tip(
+    db: Session,
+    application_id: UUID,
+    current_user: User) -> Application:
+    application = get_application_by_id(db, application_id, current_user)
+
+    tip = ai_service.generate_resume_tip(
+        company_name=application.company_name,
+        job_title=application.job_title
+    )
+
+    application.ai_tip = tip
+    db.commit()
+    db.refresh(application)
+
+    return application

@@ -46,3 +46,8 @@ class ApplicationResponse(BaseModel):
 class ApplicationListResponse(BaseModel):
     total: int
     applications: list[ApplicationResponse]
+
+# response generating by ai resume tip
+class AITipResponse(BaseModel):
+    application_id: UUID
+    ai_tip: str

@@ -14,6 +14,8 @@ __pycache__/
 *.pyd
 .Python
 
+alembic/__pycache__/
+
 # Database
 *.db
 *.sqlite3

@@ -12,12 +12,12 @@ from app.schemas.application import (
     ApplicationListResponse
 )
 from app.services import job_service
+from app.schemas.application import AITipResponse
 
 router = APIRouter(prefix="/api/v1/jobs", tags=["Job Applications"])
 
 
-@router.post("/",
-    response_model=ApplicationResponse,
+@router.post("/",response_model=ApplicationResponse,
     status_code=status.HTTP_201_CREATED
 )
 def create_application(
@@ -59,8 +59,7 @@ def update_application(
     return job_service.update_application(db, application_id, data, current_user)
 
 
-@router.delete(
-    "/{application_id}",
+@router.delete("/{application_id}",
     status_code=status.HTTP_204_NO_CONTENT 
 )
 def delete_application(
@@ -69,3 +68,16 @@ def delete_application(
     current_user: User = Depends(get_current_user)
 ):
     job_service.delete_application(db, application_id, current_user)
+
+
+@router.post("/{application_id}/ai-tip", response_model=AITipResponse)
+def get_ai_tip(
+    application_id: UUID,
+    db: Session = Depends(get_db),
+    current_user: User = Depends(get_current_user)
+):
+    application = job_service.generate_ai_tip(db, application_id, current_user)
+    return AITipResponse(
+        application_id=application.id,
+        ai_tip=application.ai_tip
+    )
