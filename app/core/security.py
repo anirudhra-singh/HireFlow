@@ -4,7 +4,7 @@ from typing import Optional
 from jose import JWTError, jwt
 from passlib.context import CryptContext
 from app.core.config import settings
-
+import uuid
 
 pwd_context = CryptContext(schemes=["bcrypt"], deprecated="auto")
 
@@ -43,7 +43,8 @@ def create_refresh_token(user_id: str) -> str:
     payload = {
         "sub": str(user_id),
         "exp": expire,
-        "type": "refresh"
+        "type": "refresh",
+        "jti": str(uuid.uuid4())
     }
     return jwt.encode(
         payload,
