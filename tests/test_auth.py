@@ -81,3 +81,91 @@ class TestLogin:
 
 
 
+# == Authorization related testing
+class TestAuthorization:
+    # user access 
+    def test_get_me_without_token_fails(self, client):
+        response = client.get("/api/v1/auth/me")
+        assert response.status_code in (401, 403)
+
+    def test_user_can_access_own_profile(self, client):
+        client.post("/api/v1/auth/register", json={
+            "full_name": "Me User",
+            "email": "me@example.com",
+            "password": "password123"
+        })
+        login_response = client.post("/api/v1/auth/login", json={
+            "email": "me@example.com",
+            "password": "password123"
+        })
+        token = login_response.json()["access_token"]
+
+        response = client.get("/api/v1/auth/me",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 200
+        assert response.json()["email"] == "me@example.com"
+
+    def test_invalid_token_rejected(self, client):
+        response = client.get("/api/v1/auth/me",
+            headers={"Authorization": "Bearer this.is.not.a.real.token"}
+        )
+        assert response.status_code == 401
+
+
+   
+    # Admin access
+    def test_user_cannot_access_admin_route(self, client):
+        client.post("/api/v1/auth/register", json={
+            "full_name": "Regular User",
+            "email": "regular@example.com",
+            "password": "password123"
+        })
+        login_response = client.post("/api/v1/auth/login", json={
+            "email": "regular@example.com",
+            "password": "password123"
+        })
+        token = login_response.json()["access_token"]
+        response = client.get(
+            "/api/v1/analytics/admin/summary",
+            headers={"Authorization": f"Bearer {token}"}
+        )
+        assert response.status_code == 403
+
+    def test_admin_can_access_admin_route(self, client, engine):
+        from app.core.database import sessionmaker
+        from app.models.user import User, UserRole
+
+        client.post("/api/v1/auth/register", json={
+            "full_name": "Admin User",
+            "email": "admin@example.com",
+            "password": "password123"
+        })
+        TestSession = sessionmaker(bind=engine)
+        db = TestSession()
+        user = db.query(User).filter(User.email == "admin@example.com").first()
+        user.role = UserRole.admin
+        db.commit()
+        db.close()
+        login_response = client.post("/api/v1/auth/login", json={
+        "email": "admin@example.com",
+        "password": "password123"
+    })
+        token = login_response.json()["access_token"]
+        response = client.get(
+        "/api/v1/analytics/admin/summary",
+        headers={"Authorization": f"Bearer {token}"}
+    )
+        assert response.status_code == 200
+
+    # Role protection
+    def test_regular_user_role_is_forced_on_register(self, client):
+        response = client.post("/api/v1/auth/register", json={
+            "full_name": "Sneaky User",
+            "email": "sneaky@example.com",
+            "password": "password123",
+            "role": "admin"          
+        })
+        assert response.status_code == 201
+        data = response.json()
+        assert data["role"] == "user"
