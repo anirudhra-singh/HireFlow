@@ -1,0 +1,34 @@
+# virtual environment 
+venv/
+.venv/
+henv/
+
+# environment 
+.env
+
+# git
+.git/
+.gitignore
+
+# python cache
+__pycache__/
+*.pyc
+*.pyo
+.pytest_cache/
+
+# database files
+*.db
+test.db
+*.sqlite3
+
+# tests 
+tests/
+
+.vscode/
+.idea/
+
+# docs
+README.md
+
+# os
+.DS_Store
