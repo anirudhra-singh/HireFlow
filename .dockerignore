@@ -32,3 +32,5 @@ README.md
 
 # os
 .DS_Store
+
+pytest.ini
