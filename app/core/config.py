@@ -9,6 +9,7 @@ class Settings(BaseSettings):
     APP_NAME: str = "HireFlow"
     APP_VERSION: str = "1.0.0"
     DEBUG: bool = False
+    SHOW_DOCS: bool = True 
 
     # database
     DATABASE_URL: str
