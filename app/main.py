@@ -1,6 +1,7 @@
 from fastapi import FastAPI
 from app.core.config import settings
 from app.api.v1.routes import auth , jobs, analytics
+from fastapi.responses import RedirectResponse
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -17,6 +18,11 @@ app.include_router(jobs.router)
 
 #analytics router
 app.include_router(analytics.router)
+
+#redirect root url to swagger docs
+@app.get("/", include_in_schema=False)
+def root():
+    return RedirectResponse(url="/docs")
 
 @app.get("/health", tags=["Health"])
 def health_check():
