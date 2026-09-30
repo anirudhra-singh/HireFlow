@@ -28,6 +28,8 @@ jobs:
           SECRET_KEY: ${{ secrets.SECRET_KEY }}
           GEMINI_API_URL: ${{ secrets.GEMINI_API_URL }}
           GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FRONTEND_URL: https://example.com
+          LOCAL_URL: https://example.com
         run: pytest tests/ -v
 
   security:
