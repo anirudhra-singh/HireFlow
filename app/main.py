@@ -3,7 +3,7 @@ from app.core.config import settings
 from app.api.v1.routes import auth , jobs, analytics
 from fastapi.responses import RedirectResponse
 from fastapi.middleware.cors import CORSMiddleware
-
+from starlette.middleware.base import BaseHTTPMiddleware
 
 app = FastAPI(
     title=settings.APP_NAME,
@@ -22,7 +22,15 @@ app.add_middleware(
 )
 
 
+class SecurityHeadersMiddleware(BaseHTTPMiddleware):
+    async def dispatch(self, request, call_next):
+        response = await call_next(request)
+        response.headers["X-Content-Type-Options"] = "nosniff"
+        response.headers["X-Frame-Options"] = "DENY"
+        response.headers["Referrer-Policy"] = "strict-origin-when-cross-origin"
+        return response
 
+app.add_middleware(SecurityHeadersMiddleware)
 
 #auth router
 app.include_router(auth.router)
