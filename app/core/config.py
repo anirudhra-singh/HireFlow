@@ -23,6 +23,10 @@ class Settings(BaseSettings):
     GEMINI_API_URL: str 
     GEMINI_API_KEY: str 
 
+    FRONTEND_URL: str
+    LOCAL_URL : str
+ 
+
 
     class Config:
         env_file = ".env"
